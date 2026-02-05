@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Love You Sumu ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+height:100vh;
+overflow:hidden;
+background:linear-gradient(to bottom,#f1f9ff,#9ac6f2,#fde6ef,#d879a1);
+color:#7a003a;
+}
+
+/* CARD */
+.card{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:rgba(255,255,255,.35);
+backdrop-filter:blur(10px);
+padding:32px;
+border-radius:22px;
+text-align:center;
+box-shadow:0 20px 50px rgba(0,0,0,.25);
+width:90%;
+max-width:360px;
+}
+
+.container,.giftBox,.poemBox,.valentineBox{display:none}
+
+.question{font-family:Pacifico;font-size:2.3rem}
+.message{margin:1.3rem 0;min-height:60px}
+.poem{line-height:1.7;font-size:1.05rem;color:#6b0035}
+
+/* BUTTONS */
+.buttons{display:flex;gap:1rem;justify-content:center;margin-top:1.2rem}
+.btn{
+padding:12px 28px;
+border-radius:40px;
+border:none;
+cursor:pointer;
+font-size:17px;
+}
+.yes{background:#ff4f9a;color:white}
+.no{background:#777;color:white}
+
+/* GIFT */
+.gift{
+position:fixed;
+top:-120px;
+left:50%;
+transform:translateX(-50%);
+font-size:80px;
+cursor:pointer;
+animation:giftDrop 1.6s ease forwards;
+}
+@keyframes giftDrop{to{top:50%}}
+
+/* BLAST */
+.blast{
+position:fixed;
+font-size:26px;
+pointer-events:none;
+animation:blast 1s ease-out forwards;
+}
+@keyframes blast{
+to{
+transform:translate(var(--x),var(--y)) scale(0);
+opacity:0;
+}
+}
+
+/* ROSES */
+.rose{
+position:fixed;
+top:-40px;
+font-size:26px;
+animation:fall linear forwards;
+pointer-events:none;
+}
+@keyframes fall{
+to{transform:translateY(110vh) rotate(360deg)}
+}
+
+/* RING */
+.ring{
+position:fixed;
+bottom:-100px;
+left:50%;
+transform:translateX(-50%);
+font-size:80px;
+animation:ringUp 1.5s ease forwards;
+display:none;
+}
+@keyframes ringUp{
+to{bottom:40%}
+}
+
+/* CANVAS */
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+<source src="Stargaze - Prem Dhillon.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="heartCanvas"></canvas>
+
+<!-- PASSWORD -->
+<div class="card" id="passwordBox">
+<h2>🔐 Secret Page</h2>
+<input type="password" id="passwordInput"><br><br>
+<button class="btn yes" onclick="unlock()">Unlock 💖</button>
+</div>
+
+<!-- QUESTIONS -->
+<div class="card container" id="box">
+<div class="question">Sumu ❤️</div>
+<div class="message" id="message"></div>
+<div class="buttons">
+<button class="btn yes" id="yesBtn">YES 💖</button>
+<button class="btn no" id="noBtn">NO 🙃</button>
+</div>
+</div>
+
+<!-- GIFT -->
+<div class="giftBox" id="giftBox">
+<div class="gift" id="gift">🎁</div>
+</div>
+
+<!-- POEM -->
+<div class="card poemBox" id="poemBox">
+<h1 class="question">I Love You Sumu ❤️</h1>
+<div class="poem" id="poemText"></div>
+<div class="buttons">
+<button class="btn yes" onclick="goValentine()">Next 💖</button>
+</div>
+</div>
+
+<!-- FINAL -->
+<div class="card valentineBox" id="valentineBox">
+<h1 class="question">Will you be my Valentine? 💌</h1>
+<div class="buttons">
+<button class="btn yes" onclick="showRing()">YES ❤️</button>
+<button class="btn no">NO 🙃</button>
+</div>
+</div>
+
+<div class="ring" id="ring">💍</div>
+
+<script>
+/* QUESTIONS */
+const questions=[
+"Do you know how special you are to me? 💕",
+"Do you feel my love every day? 🌷",
+"Can I walk this life with you? 🤍",
+"Will you always be mine? 😌"
+];
+
+let step=0;
+let typingInterval=null;
+
+/* UNLOCK */
+function unlock(){
+if(passwordInput.value==="sukhneek"){
+passwordBox.style.display="none";
+box.style.display="block";
+bgMusic.volume=.35;
+bgMusic.play();
+typeText(message,questions[step]);
+}
+}
+
+/* FIXED TYPEWRITER */
+function typeText(el,text){
+clearInterval(typingInterval);
+el.innerHTML="";
+let i=0;
+typingInterval=setInterval(()=>{
+el.innerHTML+=text.charAt(i++);
+if(i>=text.length) clearInterval(typingInterval);
+},40);
+}
+
+yesBtn.onclick=()=>{
+step++;
+if(step<questions.length){
+typeText(message,questions[step]);
+}else{
+box.style.display="none";
+giftBox.style.display="block";
+}
+};
+
+noBtn.onmouseover=()=>{
+box.style.left=Math.random()*300+"px";
+box.style.top=Math.random()*300+"px";
+};
+
+/* GIFT CLICK */
+gift.onclick=()=>{
+gift.style.display="none";
+for(let i=0;i<30;i++){
+const b=document.createElement("div");
+b.className="blast";
+b.innerHTML="💖";
+b.style.left="50%";
+b.style.top="50%";
+b.style.setProperty("--x",(Math.random()*300-150)+"px");
+b.style.setProperty("--y",(Math.random()*300-150)+"px");
+document.body.appendChild(b);
+setTimeout(()=>b.remove(),1000);
+}
+setTimeout(()=>{
+giftBox.style.display="none";
+poemBox.style.display="block";
+typePoem();
+},700);
+};
+
+/* POEM */
+const poemLines=[
+"Roses may fade and days may fly,",
+"But my love for you will never die.",
+"",
+"In every smile, in all I do,",
+"My heart beats only, always you.",
+"",
+"This Valentine and forever too,",
+"My world begins and ends with you. ❤️"
+];
+
+function typePoem(){
+poemText.innerHTML="";
+let l=0,c=0;
+(function type(){
+if(l>=poemLines.length) return;
+if(c<poemLines[l].length){
+poemText.innerHTML+=poemLines[l].charAt(c++);
+}else{
+poemText.innerHTML+="<br>";
+l++;c=0;
+}
+setTimeout(type,40);
+})();
+}
+
+function goValentine(){
+poemBox.style.display="none";
+valentineBox.style.display="block";
+}
+
+/* HEART FIREWORKS */
+const canvas=document.getElementById("heartCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+let hearts=false,particles=[];
+
+function createHeart(x,y){
+for(let t=0;t<Math.PI*2;t+=0.2){
+particles.push({
+x,y,
+dx:16*Math.pow(Math.sin(t),3)/3,
+dy:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))/3,
+life:70
+});
+}
+}
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+if(hearts && Math.random()<0.08){
+createHeart(Math.random()*canvas.width,Math.random()*canvas.height/2);
+}
+particles.forEach((p,i)=>{
+ctx.fillStyle="rgba(255,70,150,.9)";
+ctx.beginPath();
+ctx.arc(p.x,p.y,3,0,Math.PI*2);
+ctx.fill();
+p.x+=p.dx;
+p.y+=p.dy;
+p.life--;
+if(p.life<=0) particles.splice(i,1);
+});
+requestAnimationFrame(animate);
+}
+animate();
+
+/* RING + HEARTS */
+function showRing(){
+ring.style.display="block";
+hearts=true;
+}
+
+/* ROSES */
+setInterval(()=>{
+const r=document.createElement("div");
+r.className="rose";
+r.innerHTML="🌹";
+r.style.left=Math.random()*100+"vw";
+r.style.animationDuration=(4+Math.random()*3)+"s";
+document.body.appendChild(r);
+setTimeout(()=>r.remove(),7000);
+},300);
+</script>
+
+</body>
+</html>
